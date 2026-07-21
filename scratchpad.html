@@ -763,7 +763,12 @@ if (isValidColour(input)) {
 // end of over-engineering  
   
   
-  
+  var extraStyling='';
+if (height == '100vh') {
+extraStyling='flex:1; align-self:stretch;';
+}
+
+
   
 
   return `
@@ -775,6 +780,7 @@ if (isValidColour(input)) {
         min-height:${height};
         background-color:${bgColor};
         display:flex;
+        ${extraStyling};
         align-items:center;
         justify-content:center;
         color:${textColor}; 
@@ -1911,10 +1917,10 @@ const errors = errorElements.map(p => ({
   copyBtn.disabled = false; // enable copy button after build
   fullScreenBtn.disabled = false;
    // top and tail with comments
-const startComment = document.createComment("start of auto-generated html");
-const endComment = document.createComment("end of auto-generated html");
-output.insertBefore(startComment, output.firstChild);
-output.appendChild(endComment);
+//const startComment = document.createComment("start of auto-generated html");
+//const endComment = document.createComment("end of auto-generated html");
+//output.insertBefore(startComment, output.firstChild);
+//output.appendChild(endComment);
 
 }
 
@@ -1922,37 +1928,30 @@ fullScreenBtn.addEventListener("click", () => {
 fsPreview();
 });
 
-
-
-
-copyBtn.addEventListener("click", () => {
+copyBtn.addEventListener("click", (e) => {
   // Clone the generated output
   const temp = document.createElement("div");
   temp.innerHTML = output.innerHTML;
 
-  // Remove GOV.UK init flags, e.g. data-govuk-tabs-init=""
+  // Remove GOV.UK init flags
   temp.querySelectorAll("[data-govuk-tabs-init]").forEach(el => {
     el.removeAttribute("data-govuk-tabs-init");
   });
-  
- temp.querySelectorAll("[data-govuk-radios-init]").forEach(el => {
+
+  temp.querySelectorAll("[data-govuk-radios-init]").forEach(el => {
     el.removeAttribute("data-govuk-radios-init");
   });
-  
-  
-   temp.querySelectorAll("[data-govuk-checkboxes-init]").forEach(el => {
+
+  temp.querySelectorAll("[data-govuk-checkboxes-init]").forEach(el => {
     el.removeAttribute("data-govuk-checkboxes-init");
   });
 
-  // If you later find other components adding their own init markers,
-  // you can generalise it like this:
-  // temp.querySelectorAll("[data-govuk-*-init]").forEach(...)
-
-  // Rebuild the final HTML
-  const styleBlocks = Array.from(document.querySelectorAll('style#_scratch'))
-//   const styleBlocks = Array.from(document.querySelectorAll("style"))
-    .map(style => style.outerHTML)
-    .join("\n\n");
+  // Only include styles if Alt/Option is NOT held down
+  const styleBlocks = e.altKey
+    ? ""
+    : Array.from(document.querySelectorAll("style#_scratch"))
+        .map(style => style.outerHTML)
+        .join("\n\n");
 
   const cleanedHTML = `${styleBlocks}\n\n<div>\n${temp.innerHTML}\n</div>`;
 
@@ -1964,6 +1963,47 @@ copyBtn.addEventListener("click", () => {
     }, 2000);
   });
 });
+
+// // original version of copyBtn
+// copyBtn.addEventListener("click", () => {
+//   // Clone the generated output
+//   const temp = document.createElement("div");
+//   temp.innerHTML = output.innerHTML;
+// 
+//   // Remove GOV.UK init flags, e.g. data-govuk-tabs-init=""
+//   temp.querySelectorAll("[data-govuk-tabs-init]").forEach(el => {
+//     el.removeAttribute("data-govuk-tabs-init");
+//   });
+//   
+//  temp.querySelectorAll("[data-govuk-radios-init]").forEach(el => {
+//     el.removeAttribute("data-govuk-radios-init");
+//   });
+//   
+//   
+//    temp.querySelectorAll("[data-govuk-checkboxes-init]").forEach(el => {
+//     el.removeAttribute("data-govuk-checkboxes-init");
+//   });
+// 
+//   // If you later find other components adding their own init markers,
+//   // you can generalise it like this:
+//   // temp.querySelectorAll("[data-govuk-*-init]").forEach(...)
+// 
+//   // Rebuild the final HTML
+//   const styleBlocks = Array.from(document.querySelectorAll('style#_scratch'))
+// //   const styleBlocks = Array.from(document.querySelectorAll("style"))
+//     .map(style => style.outerHTML)
+//     .join("\n\n");
+// 
+//   const cleanedHTML = `${styleBlocks}\n\n<div>\n${temp.innerHTML}\n</div>`;
+// 
+//   navigator.clipboard.writeText(cleanedHTML).then(() => {
+//     const original = copyBtn.textContent;
+//     copyBtn.textContent = "Copied!";
+//     setTimeout(() => {
+//       copyBtn.textContent = original;
+//     }, 2000);
+//   });
+// });
 
 
 </script>
