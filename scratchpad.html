@@ -962,11 +962,31 @@ goback: (label) =>
 `<a href="#" class="govuk-back-link">${label||"Back"}</a>`,
 
 
-  button_p: (label) =>
-    `<button class="govuk-button" data-module="govuk-button">${label}</button>`,
+// old button_p and _s code
+//   button_p: (label,opts) =>
+//     `<button class="govuk-button" data-module="govuk-button" onclick="location.href='${opts}.html'">${label}</button>`,
+ //  button_s: (label,opts) =>
+//     `<button class="govuk-button govuk-button--secondary" data-module="govuk-button" onclick="location.href='${opts}.html'">${label}</button>`,
 
-  button_s: (label) =>
-    `<button class="govuk-button govuk-button--secondary" data-module="govuk-button">${label}</button>`,
+
+button_p: (label, opts = []) => {
+  const last = opts[opts.length - 1] || '';
+  return `<button class="govuk-button" data-module="govuk-button"${
+    last.endsWith('.html')
+      ? ` onclick="location.href='${last}'"`
+      : ''
+  }>${label}</button>`;
+},
+
+
+button_s: (label, opts = []) => {
+  const last = opts[opts.length - 1] || '';
+  return `<button class="govuk-button govuk-button--secondary" data-module="govuk-button"${
+    last.endsWith('.html')
+      ? ` onclick="location.href='${last}'"`
+      : ''
+  }>${label}</button>`;
+},
 
   button_old: (label,opts) =>
     `<button class="govuk-button" style="color:${opts[0]||"white"};background-color:${opts[1]||"#116F48"};"data-module="govuk-button">${label}</button>`,
@@ -977,6 +997,7 @@ goback: (label) =>
 button: (label, opts) => {
   const textColour = opts[0] || "white";
   const raw = (opts[1] || "").toString();
+  const link = opts[opts.length - 1] || '';
 
   const isValidColour = (value) => {
     const s = new Option().style;
@@ -1009,7 +1030,13 @@ if (colours.length > 1) {
 <button
   class="govuk-button"
   style="color:${textColour};${backgroundStyle}"
-  data-module="govuk-button">
+  data-module="govuk-button"
+  ${
+    link.endsWith('.html')
+      ? ` onclick="location.href='${link}'"`
+      : ''
+  }
+  >
   ${label}
 </button>`;
 },
@@ -2034,8 +2061,8 @@ hidden_checkbox|Label here|ID
 hidden_date|Label here|ID
 hidden_select|Label here|value 1|value 2|value 3|final value|ID
 hidden_p|Label here|ID
-hidden_button_p|Label here|ID
-hidden_button_s|Label here|ID
+hidden_button_p|Label here|url|ID
+hidden_button_s|Label here|url|ID
 hidden_h2|Label here|ID
 hidden_h3|Label here|ID
 ho_alert|Label here|Description|info/error/success
@@ -2043,9 +2070,9 @@ ho_spinner|Label here
 ho_timeline|Label here|Title1:Author1:Date1:Description1|Title2:Author2:Date2:Description2
 goback
 goback|Label here
-button|Label here|font colour|background colour
-button_p|Label here
-button_s|Label here
+button|Label here|font colour|background colour|url
+button_p|Label here|url
+button_s|Label here|url
 upload|Upload a file
 details|Title here |content
 inset|Text here
